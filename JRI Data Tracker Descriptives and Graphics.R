@@ -1,18 +1,25 @@
 
-# JRI data tracker descriptives
-
 library(dplyr)
 library(plyr)
 library(tidyr)
 # Install the car package
 install.packages("car")
+install.packages("plyr")
+install.packages("tidyr")
+install.packages("reshape")
+install.packages("ggplot2")
+library(reshape)
+library(ggplot2)
 
 # Load the car package
 library(car)
 
 getwd()
 
-setwd("D:/Users/JWelshlo/Documents/JRI/data tracker/Text and Data for Comms")
+#
+
+setwd("C:/Users/jerem_000/Documents/Urban")
+#setwd("D:/Users/JWelshlo/Documents/JRI/data tracker/Text and Data for Comms")
 
 jri <- read.csv("jri_datatracker_2017update.csv")
 
@@ -44,6 +51,19 @@ jri2010 <- select(jri2010, state, pri_base, yr1_base, yr2_base, yr3_base, yr4_ba
 #Line graph of change over time.
 ## Need three variables, one with state, one with year and one with the population
 jrilong <- gather(jri2010, state, population, pri_base-yr5_base )
+
+jrilong2 <- melt(jri2010, id=c("state"))
+
+#create a new year variable
+jrilong2 <- transform(jrilong2, year = 0)
+jrilong2$year <- ifelse(jrilong2$variable == "yr1_base", 1 , jrilong2$year)
+jrilong2$year <- ifelse(jrilong2$variable == "yr2_base", 2 , jrilong2$year)
+jrilong2$year <- ifelse(jrilong2$variable == "yr3_base", 3 , jrilong2$year)
+jrilong2$year <- ifelse(jrilong2$variable == "yr4_base", 4 , jrilong2$year)
+jrilong2$year <- ifelse(jrilong2$variable == "yr5_base", 5 , jrilong2$year)
+
+ggplot(data=jrilong2, aes(x=year, y=value, group=state, color=state)) + geom_line()
+
 
 
 
